@@ -1,4 +1,3 @@
-import { useContext } from "react";
 import { useHistory } from "react-router-dom";
 
 import illustrationImg from "../assets/images/illustration.svg";
@@ -7,12 +6,13 @@ import googleIconImg from "../assets/images/google-icon.svg";
 
 import "../styles/auth.scss";
 import { Button } from "../components/Button";
-
-import AuthContext from "../context/AuthContext";
+import { useAuth } from "../hooks/useAuth";
+import { FormEvent, useState } from "react";
 
 export function Home() {
   const history = useHistory();
-  const { user, signInWithGoogle } = useContext(AuthContext);
+  const { user, signInWithGoogle } = useAuth();
+  const [roomCode, setRoomCode] = useState<string>();
 
   async function handleCreateRoom() {
     if (!user) {
@@ -21,6 +21,10 @@ export function Home() {
 
     history.push("/rooms/new");
   }
+
+  const handleJoinRoom = (event: FormEvent) => {
+    event.preventDefault();
+  };
 
   return (
     <div id="page-auth">
@@ -40,8 +44,13 @@ export function Home() {
             Crie sua sala com o Google
           </button>
           <div className="separator">ou entre em uma sala</div>
-          <form action="">
-            <input type="text" placeholder="Digite o codigo da sala"></input>
+          <form action="" onSubmit={handleCreateRoom}>
+            <input
+              onChange={(event) => setRoomCode(event.target.value)}
+              value={roomCode}
+              type="text"
+              placeholder="Digite o codigo da sala"
+            ></input>
             <Button type="submit">Entrar na sala</Button>
           </form>
         </div>
